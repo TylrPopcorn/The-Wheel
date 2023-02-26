@@ -1,6 +1,8 @@
 import React from "react";
 import { Link, Routes, Route } from "react-router-dom";
 
+import "../styles/styles.css";
+
 import Login from "./components/Login"; //Login page.
 //---------
 //Main function:
