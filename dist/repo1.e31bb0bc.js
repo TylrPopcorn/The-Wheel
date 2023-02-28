@@ -35215,14 +35215,100 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _react = _interopRequireDefault(require("react"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+const functions = {}; //Helpers
+//--------------------------
 //---Main function:
 class Login extends _react.default.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      LoginInfo: {
+        //Used to help keep track of login information.
+        username: "",
+        password: "",
+        username_error_Msg: "",
+        password_error_msg: ""
+      },
+      buttonDisabled: false //Used for the login button disabilities.
+    };
+
+    //Bind the functions for some stupid reason (because it was not working normally.. tf?):
+    this.onChange = this.onChange.bind(this);
   }
   // ----------   ----------- \\
+  //Main Component Functions:
+  componentDidMount() {
+    //when the whole component has mounted.
+    setTimeout(() => {
+      //Delay
+      const token = localStorage.getItem("token"); //Attempt to get a client-sided token
+      const {
+        navigate
+      } = this.props;
+      if (token !== null) {
+        //IF the token is found
+        navigate("/wheel"); //Redirect the user.
+      }
+    }, 2);
+  }
+  onChange = function (evt) {
+    //Each time the form gets changed.
+    const {
+      id,
+      value
+    } = evt.target; //get the appropriate info from the form
+    const {
+      LoginInfo
+    } = this.state;
+    let username_error_Msg = ""; //Used to determine what the user message says
 
+    if (id === "username") {
+      //IF the input is the 'username' input then
+      const input = document.getElementsByClassName("input-username"); //Grab the username input
+
+      for (let x of admin_LOGIN) {
+        //Loop through all of the correct Logins
+        if (x.username != null) {
+          //IF the child has a username child then
+          const username = x.username.toString(); //grab the username of THIS CURRENT child in the rotation.
+
+          console.log(value, username);
+          if (value == username) {
+            //IF the value of the input matches this username then,
+            input[0].classList.add("success"); //Add a classlist to it.
+            //NOTE: We are just assuming that there is only 1 item in the array and that this IS the correct item we need.
+            //NOTE: Not a good practice. Check and verify you have the correct item.
+            //NOTE: However, because I know I only used 1 item with this className, I know for a fact I am safe.
+
+            username_error_Msg = "Valid username"; //Update the username msg to tell the user.
+            break; //end the loop.
+          } else {
+            //else
+            //NOTE: Same deal applies here just as above.
+            input[0].classList.remove("success"); //remove any possible success attribute it might have.
+          }
+        }
+      }
+    }
+
+    //set/Update the state:
+    this.setState({
+      ...this.state,
+      //keep all the original state that was here as well.
+      LoginInfo: {
+        ...LoginInfo,
+        //keep all the original state that was here as well.
+        [id]: value,
+        //update any new values.
+
+        username_error_Msg: username_error_Msg //also update the message.
+      }
+    });
+  };
+
+  onSubmit = function (evt) {
+    evt.preventDefault();
+  };
   render() {
     //Render items to the screen for the user to see:
     return /*#__PURE__*/_react.default.createElement("div", {
@@ -35230,37 +35316,59 @@ class Login extends _react.default.Component {
     }, /*#__PURE__*/_react.default.createElement("div", {
       className: "login-container"
     }, /*#__PURE__*/_react.default.createElement("form", {
-      class: "form"
+      className: "form",
+      onSubmit: this.onSubmit
     }, /*#__PURE__*/_react.default.createElement("div", {
-      class: "input-group success"
+      className: "input-group input-username"
     }, /*#__PURE__*/_react.default.createElement("label", {
-      for: "username"
+      htmlFor: "username"
     }, "Username"), /*#__PURE__*/_react.default.createElement("input", {
       type: "text",
+      onChange: this.onChange,
+      value: this.state.LoginInfo.username,
       name: "username",
       id: "username"
     }), /*#__PURE__*/_react.default.createElement("span", {
-      class: "msg"
-    }, "Valid username")), /*#__PURE__*/_react.default.createElement("div", {
-      className: "input-group error"
+      className: "msg"
+    }, this.state.LoginInfo.username_error_Msg)), /*#__PURE__*/_react.default.createElement("div", {
+      className: "input-group input-password"
     }, /*#__PURE__*/_react.default.createElement("label", {
-      for: "password"
+      htmlFor: "password"
     }, "Password"), /*#__PURE__*/_react.default.createElement("input", {
       type: "password",
       name: "password",
       id: "password"
     }), /*#__PURE__*/_react.default.createElement("span", {
-      class: "msg"
+      className: "msg"
     }, "Incorrect password")), /*#__PURE__*/_react.default.createElement("button", {
       type: "submit",
-      class: "login-button"
+      className: "login-button"
     }, "Login"))));
   }
 }
-const adminLogin = {
-  username: "12345",
-  password: "54321"
-};
+//-------------
+//Extra info:
+const admin_LOGIN = [
+//All of the qualified login names:
+{
+  username: "CosmicSpectrum",
+  password: "12345"
+}, {
+  username: "PixelPenguin",
+  password: "67890"
+}, {
+  username: "ElectricHaze",
+  password: "0112131415"
+}, {
+  username: "MidnightMist",
+  password: "5161718192"
+}];
+
+//-------------
+//Extra functions to help the main component:
+functions.Verify = function (t) {};
+
+///----exports:
 var _default = Login;
 exports.default = _default;
 },{"react":"node_modules/react/index.js"}],"src/App.js":[function(require,module,exports) {
@@ -35270,29 +35378,53 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _react = _interopRequireDefault(require("react"));
+var _react = _interopRequireWildcard(require("react"));
 var _reactRouterDom = require("react-router-dom");
 require("../styles/styles.css");
 var _Login = _interopRequireDefault(require("./components/Login"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 //Login page.
 //---------
 //Main function:
 function App() {
+  // const [error, setError] = useState("");
+  const navigate = (0, _reactRouterDom.useNavigate)(); //Used to redirect the user.
+
+  // function ERROR(msg) {
+  //   //Used to show any errors (if necessary.)
+  //   setError(msg); //Update the state to show the error.
+
+  //   setTimeout(() => {
+  //     //After some time,
+  //     setError(""); //clear the error
+  //   }, 2015);
+  // }
+
+  function Logout() {
+    //When loggin out
+    localStorage.removeItem("token"); //remve the token from storage
+    navigate("/"); //Redicrect the user to the homepage
+  }
+
   return (
     /*#__PURE__*/
     //html
     _react.default.createElement("div", {
       className: "full-screen-container"
     }, /*#__PURE__*/_react.default.createElement("button", {
-      id: "logout"
+      id: "logout",
+      onClick: Logout
     }, "Logout"), /*#__PURE__*/_react.default.createElement("h1", {
       className: "title"
     }, "The Wheel"), " ", /*#__PURE__*/_react.default.createElement("p", {
       id: "error"
     }, "ERRROR"), /*#__PURE__*/_react.default.createElement(_reactRouterDom.Routes, null, /*#__PURE__*/_react.default.createElement(_reactRouterDom.Route, {
       path: "/",
-      element: /*#__PURE__*/_react.default.createElement(_Login.default, null)
+      element: /*#__PURE__*/_react.default.createElement(_Login.default, {
+        navigate: navigate
+      })
     }), /*#__PURE__*/_react.default.createElement(_reactRouterDom.Route, {
       exact: true,
       path: "wheel"
@@ -35300,19 +35432,7 @@ function App() {
     })))
   );
 }
-var _default = App; //  <div className="full-screen-container">
-//       <button id="logout">Logout</button>
-//       <h1>The Wheel</h1> {/* Title */}
-//       <Routes>
-//         {/* Routes */}
-//         <Route path="/" element={<Login />} />
-//         <Route
-//           exact
-//           path="wheel"
-//           //element={}
-//         />
-//       </Routes>
-//     </div>
+var _default = App;
 exports.default = _default;
 },{"react":"node_modules/react/index.js","react-router-dom":"node_modules/react-router-dom/dist/index.js","../styles/styles.css":"styles/styles.css","./components/Login":"src/components/Login.js"}],"index.js":[function(require,module,exports) {
 "use strict";
@@ -35367,7 +35487,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60086" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62950" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
