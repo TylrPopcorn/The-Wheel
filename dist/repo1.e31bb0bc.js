@@ -35225,9 +35225,36 @@ class Login extends _react.default.Component {
 
   render() {
     //Render items to the screen for the user to see:
-    return /*#__PURE__*/_react.default.createElement("form", {
-      id: "loginForm"
-    });
+    return /*#__PURE__*/_react.default.createElement("div", {
+      className: "LOGIN"
+    }, /*#__PURE__*/_react.default.createElement("div", {
+      className: "login-container"
+    }, /*#__PURE__*/_react.default.createElement("form", {
+      class: "form"
+    }, /*#__PURE__*/_react.default.createElement("div", {
+      class: "input-group success"
+    }, /*#__PURE__*/_react.default.createElement("label", {
+      for: "username"
+    }, "Username"), /*#__PURE__*/_react.default.createElement("input", {
+      type: "text",
+      name: "username",
+      id: "username"
+    }), /*#__PURE__*/_react.default.createElement("span", {
+      class: "msg"
+    }, "Valid username")), /*#__PURE__*/_react.default.createElement("div", {
+      className: "input-group error"
+    }, /*#__PURE__*/_react.default.createElement("label", {
+      for: "password"
+    }, "Password"), /*#__PURE__*/_react.default.createElement("input", {
+      type: "password",
+      name: "password",
+      id: "password"
+    }), /*#__PURE__*/_react.default.createElement("span", {
+      class: "msg"
+    }, "Incorrect password")), /*#__PURE__*/_react.default.createElement("button", {
+      type: "submit",
+      class: "login-button"
+    }, "Login"))));
   }
 }
 const adminLogin = {
@@ -35256,16 +35283,12 @@ function App() {
     /*#__PURE__*/
     //html
     _react.default.createElement("div", {
-      className: "App"
+      className: "full-screen-container"
     }, /*#__PURE__*/_react.default.createElement("button", {
       id: "logout"
-    }, "Logout"), /*#__PURE__*/_react.default.createElement("h1", null, "The Wheel"), " ", /*#__PURE__*/_react.default.createElement("nav", null, /*#__PURE__*/_react.default.createElement(_reactRouterDom.Link, {
-      id: "LOGIN_SCREEN",
-      to: "/"
-    }, "Login"), /*#__PURE__*/_react.default.createElement(_reactRouterDom.Link, {
-      id: "THE_WHEEL",
-      to: "/wheel"
-    }, "Wheel")), /*#__PURE__*/_react.default.createElement("p", {
+    }, "Logout"), /*#__PURE__*/_react.default.createElement("h1", {
+      className: "title"
+    }, "The Wheel"), " ", /*#__PURE__*/_react.default.createElement("p", {
       id: "error"
     }, "ERRROR"), /*#__PURE__*/_react.default.createElement(_reactRouterDom.Routes, null, /*#__PURE__*/_react.default.createElement(_reactRouterDom.Route, {
       path: "/",
@@ -35277,7 +35300,19 @@ function App() {
     })))
   );
 }
-var _default = App;
+var _default = App; //  <div className="full-screen-container">
+//       <button id="logout">Logout</button>
+//       <h1>The Wheel</h1> {/* Title */}
+//       <Routes>
+//         {/* Routes */}
+//         <Route path="/" element={<Login />} />
+//         <Route
+//           exact
+//           path="wheel"
+//           //element={}
+//         />
+//       </Routes>
+//     </div>
 exports.default = _default;
 },{"react":"node_modules/react/index.js","react-router-dom":"node_modules/react-router-dom/dist/index.js","../styles/styles.css":"styles/styles.css","./components/Login":"src/components/Login.js"}],"index.js":[function(require,module,exports) {
 "use strict";
@@ -35332,7 +35367,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63999" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60086" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

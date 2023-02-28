@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import "../styles/styles.css";
 
@@ -9,18 +9,9 @@ import Login from "./components/Login"; //Login page.
 function App() {
   return (
     //html
-    <div className="App">
+    <div className="full-screen-container">
       <button id="logout">Logout</button>
-      <h1>The Wheel</h1> {/* Title */}
-      <nav>
-        {/*Navigation*/}
-        <Link id="LOGIN_SCREEN" to="/">
-          Login
-        </Link>
-        <Link id="THE_WHEEL" to="/wheel">
-          Wheel
-        </Link>
-      </nav>
+      <h1 className="title">The Wheel</h1> {/* Title */}
       <p id="error">ERRROR</p>
       <Routes>
         {/* Routes */}
@@ -37,3 +28,18 @@ function App() {
 }
 
 export default App;
+
+//  <div className="full-screen-container">
+//       <button id="logout">Logout</button>
+//       <h1>The Wheel</h1> {/* Title */}
+//       <Routes>
+//         {/* Routes */}
+//         <Route path="/" element={<Login />} />
+
+//         <Route
+//           exact
+//           path="wheel"
+//           //element={}
+//         />
+//       </Routes>
+//     </div>
