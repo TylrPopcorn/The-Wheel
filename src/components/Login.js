@@ -54,7 +54,7 @@ class Login extends React.Component {
           //IF the child has a username child then
           const username = x.username.toString(); //grab the username of THIS CURRENT child in the rotation.
 
-          console.log(value, username);
+          // console.log(value, username);
           if (value == username) {
             //IF the value of the input matches this username then,
             input[0].classList.add("success"); //Add a classlist to it.
@@ -101,7 +101,7 @@ class Login extends React.Component {
               <input
                 type="text"
                 onChange={this.onChange}
-                value={this.state.LoginInfo.username}
+                value={this.state.LoginInfo.username} //Controlled form input
                 name="username"
                 id="username"
               />
@@ -112,8 +112,16 @@ class Login extends React.Component {
 
             <div className="input-group input-password">
               <label htmlFor="password">Password</label>
-              <input type="password" name="password" id="password" />
-              <span className="msg">Incorrect password</span>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                onChange={this.onChange}
+                value={this.state.LoginInfo.password} //Controlled form input
+              />
+              <span className="msg">
+                {this.state.LoginInfo.password_error_msg}
+              </span>
             </div>
 
             <button type="submit" className="login-button">
@@ -123,12 +131,13 @@ class Login extends React.Component {
         </div>
       </div>
     );
+    //[ CREDIT TO WDS:| https://www.youtube.com/watch?v=reumU4CvruA ]
   }
 }
 //-------------
 //Extra info:
 const admin_LOGIN = [
-  //All of the qualified login names:
+  //All of the qualified login names and their corresponding passwords:
   { username: "CosmicSpectrum", password: "12345" },
   { username: "PixelPenguin", password: "67890" },
   { username: "ElectricHaze", password: "0112131415" },

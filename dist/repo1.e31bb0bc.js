@@ -35272,7 +35272,7 @@ class Login extends _react.default.Component {
           //IF the child has a username child then
           const username = x.username.toString(); //grab the username of THIS CURRENT child in the rotation.
 
-          console.log(value, username);
+          // console.log(value, username);
           if (value == username) {
             //IF the value of the input matches this username then,
             input[0].classList.add("success"); //Add a classlist to it.
@@ -35325,7 +35325,8 @@ class Login extends _react.default.Component {
     }, "Username"), /*#__PURE__*/_react.default.createElement("input", {
       type: "text",
       onChange: this.onChange,
-      value: this.state.LoginInfo.username,
+      value: this.state.LoginInfo.username //Controlled form input
+      ,
       name: "username",
       id: "username"
     }), /*#__PURE__*/_react.default.createElement("span", {
@@ -35337,19 +35338,22 @@ class Login extends _react.default.Component {
     }, "Password"), /*#__PURE__*/_react.default.createElement("input", {
       type: "password",
       name: "password",
-      id: "password"
+      id: "password",
+      onChange: this.onChange,
+      value: this.state.LoginInfo.password //Controlled form input
     }), /*#__PURE__*/_react.default.createElement("span", {
       className: "msg"
-    }, "Incorrect password")), /*#__PURE__*/_react.default.createElement("button", {
+    }, this.state.LoginInfo.password_error_msg)), /*#__PURE__*/_react.default.createElement("button", {
       type: "submit",
       className: "login-button"
     }, "Login"))));
+    //[ CREDIT TO WDS:| https://www.youtube.com/watch?v=reumU4CvruA ]
   }
 }
 //-------------
 //Extra info:
 const admin_LOGIN = [
-//All of the qualified login names:
+//All of the qualified login names and their corresponding passwords:
 {
   username: "CosmicSpectrum",
   password: "12345"
