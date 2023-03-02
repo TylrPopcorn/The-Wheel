@@ -1,6 +1,9 @@
 import React from "react";
 
-const functions = {}; //Helpers
+const module = {
+  //All global data that can be used here.
+  functions: {}, //Helpers
+};
 //--------------------------
 //---Main function:
 class Login extends React.Component {
@@ -15,8 +18,6 @@ class Login extends React.Component {
         username_error_Msg: "",
         password_error_msg: "",
       },
-
-      buttonDisabled: false, //Used for the login button disabilities.
     };
 
     //Bind the functions for some reason (because it was not working normally.. tf?):
@@ -45,33 +46,30 @@ class Login extends React.Component {
     const { LoginInfo } = this.state;
     let username_error_Msg = ""; //Used to determine what the user message says
 
-    if (id === "username") {
-      //IF the input is the 'username' input then
-      const input = document.getElementsByClassName("input-username"); //Grab the username input
+    const INPUT = module.functions.Get_Label(id);
+    if (INPUT !== undefined) {
+      switch (id) {
+        case "password": //If the input is password
+          INPUT.classList.remove("error");
 
-      for (let x of admin_LOGIN) {
-        //Loop through all of the correct Logins
-        if (x.username != null) {
-          //IF the child has a username child then
-          const username = x.username.toString(); //grab the username of THIS CURRENT child in the rotation.
+          break;
+        case "username": //If the input is username
+          const Correct_Login = module.functions.VerifyUsername(value);
 
-          // console.log(value, username);
-          if (value == username) {
-            //IF the value of the input matches this username then,
-            input[0].classList.add("success"); //Add a classlist to it.
-            //NOTE: We are just assuming that there is only 1 item in the array and that this IS the correct item we need.
-            //NOTE: Not a good practice. Check and verify you have the correct item.
-            //NOTE: However, because I know I only used 1 item with this className, I know for a fact I am safe.
-
+          if (Correct_Login === true) {
+            INPUT.classList.add("success"); //Add a classlist to it.
             username_error_Msg = "Valid username"; //Update the username msg to tell the user.
-            break; //end the loop.
           } else {
-            //else
-            //NOTE: Same deal applies here just as above.
-            input[0].classList.remove("success"); //remove any possible success attribute it might have.
+            INPUT.classList.remove("success"); //remove any possible success attribute it might have.
+            INPUT.classList.remove("error"); //remove any possible error attribute it might have.
           }
-        }
+          break;
+        default:
+          //By default just return false.
+          return false; //Although this should not happen
       }
+    } else {
+      //Possibly show an error?
     }
 
     //set/Update the state:
@@ -89,11 +87,23 @@ class Login extends React.Component {
   onSubmit = function (evt) {
     //Each time the form gets submitted.
     evt.preventDefault();
-
+    //TODO: FINISH THIS FUNCTION
+    const { Error } = this.props; //Error passed down in props.
     const { username, password } = this.state.LoginInfo;
+
+    const Login_inputs = document.getElementsByClassName("input-group"); //Grab BOTH of the login inputs
 
     if (username.trim().length > 0 && password.trim().length) {
     } else {
+      Error("Please provide valid login information"); //Invoke the error function
+
+      if (username.trim().length == 0) {
+        Login_inputs[0].classList.add("error");
+      }
+
+      if (password.trim().length == 0) {
+        Login_inputs[1].classList.add("error");
+      }
     }
   };
 
@@ -104,6 +114,7 @@ class Login extends React.Component {
         <div className="login-container">
           {/* LOGIN FORM */}
           <form className="form" onSubmit={this.onSubmit}>
+            {/*USERNAME BOX: */}
             <div className="input-group input-username">
               <label htmlFor="username">Username</label>
               <input
@@ -118,6 +129,7 @@ class Login extends React.Component {
               </span>
             </div>
 
+            {/*PASSWORD BOX: */}
             <div className="input-group input-password">
               <label htmlFor="password">Password</label>
               <input
@@ -132,6 +144,7 @@ class Login extends React.Component {
               </span>
             </div>
 
+            {/*SUBMIT BUTTON*/}
             <button type="submit" className="login-button">
               Login
             </button>
@@ -144,7 +157,7 @@ class Login extends React.Component {
 }
 //-------------
 //Extra info:
-const admin_LOGIN = [
+module.admin_LOGIN = [
   //All of the qualified login names and their corresponding passwords:
   { username: "CosmicSpectrum", password: "12345" },
   { username: "PixelPenguin", password: "67890" },
@@ -152,9 +165,54 @@ const admin_LOGIN = [
   { username: "MidnightMist", password: "5161718192" },
 ];
 
+//
 //-------------
 //Extra functions to help the main component:
-functions.Verify = function (t) {};
+module.functions.Get_Label = function (t) {
+  //This function will retrieve and validate the required input label.
+  const Login_inputs = document.getElementsByClassName("input-group"); //Grab BOTH of the login inputs
+  //TODO: I WAS REFACTORING THIS SWITCH STATEMENT BELOW:
+  switch (t) {
+    case "password":
+      for (let input of Login_inputs) {
+        if (input.classList.contains("input-password")) {
+          return input;
+        }
+      }
 
-///----exports:
+      return undefined;
+    case "username":
+      for (let input of Login_inputs) {
+        if (input.classList.contains("input-username")) {
+          return input;
+        }
+      }
+
+      return undefined;
+    default: //This should only happen if a label cannot be found.
+      return undefined;
+  }
+};
+
+module.functions.VerifyUsername = function (v) {
+  //This function will verify that the inputted username is correct.
+  for (let x of module.admin_LOGIN) {
+    //Loop through all of the correct Logins
+    if (x.username != null) {
+      //IF the child has a username child then
+      const username = x.username.toString(); //grab the username of THIS CURRENT child in the rotation.
+
+      if (v == username) {
+        //If the username input matches the current username in the loop.
+        return true;
+      }
+    }
+  }
+
+  return false; //return false if the username was not found.
+};
+//
+//
+//---------------
+///-------------------------exports:
 export default Login;

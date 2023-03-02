@@ -35215,7 +35215,10 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _react = _interopRequireDefault(require("react"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-const functions = {}; //Helpers
+const _module = {
+  //All global data that can be used here.
+  functions: {} //Helpers
+};
 //--------------------------
 //---Main function:
 class Login extends _react.default.Component {
@@ -35228,8 +35231,7 @@ class Login extends _react.default.Component {
         password: "",
         username_error_Msg: "",
         password_error_msg: ""
-      },
-      buttonDisabled: false //Used for the login button disabilities.
+      }
     };
 
     //Bind the functions for some reason (because it was not working normally.. tf?):
@@ -35263,33 +35265,32 @@ class Login extends _react.default.Component {
     } = this.state;
     let username_error_Msg = ""; //Used to determine what the user message says
 
-    if (id === "username") {
-      //IF the input is the 'username' input then
-      const input = document.getElementsByClassName("input-username"); //Grab the username input
-
-      for (let x of admin_LOGIN) {
-        //Loop through all of the correct Logins
-        if (x.username != null) {
-          //IF the child has a username child then
-          const username = x.username.toString(); //grab the username of THIS CURRENT child in the rotation.
-
-          // console.log(value, username);
-          if (value == username) {
-            //IF the value of the input matches this username then,
-            input[0].classList.add("success"); //Add a classlist to it.
-            //NOTE: We are just assuming that there is only 1 item in the array and that this IS the correct item we need.
-            //NOTE: Not a good practice. Check and verify you have the correct item.
-            //NOTE: However, because I know I only used 1 item with this className, I know for a fact I am safe.
-
+    const INPUT = _module.functions.Get_Label(id);
+    if (INPUT !== undefined) {
+      switch (id) {
+        case "password":
+          //If the input is password
+          INPUT.classList.remove("error");
+          break;
+        case "username":
+          //If the input is username
+          const Correct_Login = _module.functions.VerifyUsername(value);
+          if (Correct_Login === true) {
+            INPUT.classList.add("success"); //Add a classlist to it.
             username_error_Msg = "Valid username"; //Update the username msg to tell the user.
-            break; //end the loop.
           } else {
-            //else
-            //NOTE: Same deal applies here just as above.
-            input[0].classList.remove("success"); //remove any possible success attribute it might have.
+            INPUT.classList.remove("success"); //remove any possible success attribute it might have.
+            INPUT.classList.remove("error"); //remove any possible error attribute it might have.
           }
-        }
+
+          break;
+        default:
+          //By default just return false.
+          return false;
+        //Although this should not happen
       }
+    } else {
+      //Possibly show an error?
     }
 
     //set/Update the state:
@@ -35310,11 +35311,26 @@ class Login extends _react.default.Component {
   onSubmit = function (evt) {
     //Each time the form gets submitted.
     evt.preventDefault();
+    //TODO: FINISH THIS FUNCTION
+    const {
+      Error
+    } = this.props; //Error passed down in props.
     const {
       username,
       password
     } = this.state.LoginInfo;
-    if (username.trim().length > 0 && password.trim().length) {} else {}
+    const Login_inputs = document.getElementsByClassName("input-group"); //Grab BOTH of the login inputs
+
+    if (username.trim().length > 0 && password.trim().length) {} else {
+      Error("Please provide valid login information"); //Invoke the error function
+
+      if (username.trim().length == 0) {
+        Login_inputs[0].classList.add("error");
+      }
+      if (password.trim().length == 0) {
+        Login_inputs[1].classList.add("error");
+      }
+    }
   };
   render() {
     //Render items to the screen for the user to see:
@@ -35359,7 +35375,7 @@ class Login extends _react.default.Component {
 }
 //-------------
 //Extra info:
-const admin_LOGIN = [
+_module.admin_LOGIN = [
 //All of the qualified login names and their corresponding passwords:
 {
   username: "CosmicSpectrum",
@@ -35375,11 +35391,53 @@ const admin_LOGIN = [
   password: "5161718192"
 }];
 
+//
 //-------------
 //Extra functions to help the main component:
-functions.Verify = function (t) {};
+_module.functions.Get_Label = function (t) {
+  //This function will retrieve and validate the required input label.
+  const Login_inputs = document.getElementsByClassName("input-group"); //Grab BOTH of the login inputs
+  //TODO: I WAS REFACTORING THIS SWITCH STATEMENT BELOW:
+  switch (t) {
+    case "password":
+      for (let input of Login_inputs) {
+        if (input.classList.contains("input-password")) {
+          return input;
+        }
+      }
+      return undefined;
+    case "username":
+      for (let input of Login_inputs) {
+        if (input.classList.contains("input-username")) {
+          return input;
+        }
+      }
+      return undefined;
+    default:
+      //This should only happen if a label cannot be found.
+      return undefined;
+  }
+};
+_module.functions.VerifyUsername = function (v) {
+  //This function will verify that the inputted username is correct.
+  for (let x of _module.admin_LOGIN) {
+    //Loop through all of the correct Logins
+    if (x.username != null) {
+      //IF the child has a username child then
+      const username = x.username.toString(); //grab the username of THIS CURRENT child in the rotation.
 
-///----exports:
+      if (v == username) {
+        //If the username input matches the current username in the loop.
+        return true;
+      }
+    }
+  }
+  return false; //return false if the username was not found.
+};
+//
+//
+//---------------
+///-------------------------exports:
 var _default = Login;
 exports.default = _default;
 },{"react":"node_modules/react/index.js"}],"src/App.js":[function(require,module,exports) {
@@ -35410,7 +35468,7 @@ function App() {
     setTimeout(() => {
       //After some time,
       setError(""); //clear the error
-    }, 2015);
+    }, 3015);
   }
   function Logout() {
     //When loggin out
@@ -35430,10 +35488,11 @@ function App() {
       className: "title"
     }, "The Wheel"), " ", /*#__PURE__*/_react.default.createElement("p", {
       id: "error"
-    }, "ERRROR"), /*#__PURE__*/_react.default.createElement(_reactRouterDom.Routes, null, /*#__PURE__*/_react.default.createElement(_reactRouterDom.Route, {
+    }, error), /*#__PURE__*/_react.default.createElement(_reactRouterDom.Routes, null, /*#__PURE__*/_react.default.createElement(_reactRouterDom.Route, {
       path: "/",
       element: /*#__PURE__*/_react.default.createElement(_Login.default, {
-        navigate: navigate
+        navigate: navigate,
+        Error: ERROR
       })
     }), /*#__PURE__*/_react.default.createElement(_reactRouterDom.Route, {
       exact: true,

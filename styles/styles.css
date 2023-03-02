@@ -52,8 +52,7 @@ body {
 #error {
   color: red;
   text-align: center;
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 15px;
   font-family: "Courier New", Courier, monospace;
   -webkit-text-stroke-width: 0.15px;
   -webkit-text-stroke-color: black;
@@ -149,7 +148,7 @@ body {
   font-size: 1.5rem;
   font-weight: lighter;
   color: white;
-  background-color: hsl(var(--primary-hsl), 0.25);
+  background-color: hsl(var(--primary-hsl), 0.35);
   border: 1px solid hsl(var(--primary-hsl));
   border-radius: 0.25em;
   outline: none;

@@ -17,7 +17,7 @@ function App() {
     setTimeout(() => {
       //After some time,
       setError(""); //clear the error
-    }, 2015);
+    }, 3015);
   }
 
   function Logout() {
@@ -33,10 +33,10 @@ function App() {
         Logout
       </button>
       <h1 className="title">The Wheel</h1> {/* Title */}
-      <p id="error">ERRROR</p>
+      <p id="error">{error}</p>
       <Routes>
         {/* Routes */}
-        <Route path="/" element={<Login navigate={navigate} />} />
+        <Route path="/" element={<Login navigate={navigate} Error={ERROR} />} />
 
         <Route
           exact
