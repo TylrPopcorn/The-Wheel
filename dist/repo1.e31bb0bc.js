@@ -35232,8 +35232,9 @@ class Login extends _react.default.Component {
       buttonDisabled: false //Used for the login button disabilities.
     };
 
-    //Bind the functions for some stupid reason (because it was not working normally.. tf?):
+    //Bind the functions for some reason (because it was not working normally.. tf?):
     this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
   // ----------   ----------- \\
   //Main Component Functions:
@@ -35307,7 +35308,13 @@ class Login extends _react.default.Component {
   };
 
   onSubmit = function (evt) {
+    //Each time the form gets submitted.
     evt.preventDefault();
+    const {
+      username,
+      password
+    } = this.state.LoginInfo;
+    if (username.trim().length > 0 && password.trim().length) {} else {}
   };
   render() {
     //Render items to the screen for the user to see:
@@ -35393,19 +35400,18 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 //---------
 //Main function:
 function App() {
-  // const [error, setError] = useState("");
+  const [error, setError] = (0, _react.useState)("");
   const navigate = (0, _reactRouterDom.useNavigate)(); //Used to redirect the user.
 
-  // function ERROR(msg) {
-  //   //Used to show any errors (if necessary.)
-  //   setError(msg); //Update the state to show the error.
+  function ERROR(msg) {
+    //Used to show any errors (if necessary.)
+    setError(msg); //Update the state to show the error.
 
-  //   setTimeout(() => {
-  //     //After some time,
-  //     setError(""); //clear the error
-  //   }, 2015);
-  // }
-
+    setTimeout(() => {
+      //After some time,
+      setError(""); //clear the error
+    }, 2015);
+  }
   function Logout() {
     //When loggin out
     localStorage.removeItem("token"); //remve the token from storage

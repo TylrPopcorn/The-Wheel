@@ -19,8 +19,9 @@ class Login extends React.Component {
       buttonDisabled: false, //Used for the login button disabilities.
     };
 
-    //Bind the functions for some stupid reason (because it was not working normally.. tf?):
+    //Bind the functions for some reason (because it was not working normally.. tf?):
     this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
   // ----------   ----------- \\
   //Main Component Functions:
@@ -86,7 +87,14 @@ class Login extends React.Component {
   };
 
   onSubmit = function (evt) {
+    //Each time the form gets submitted.
     evt.preventDefault();
+
+    const { username, password } = this.state.LoginInfo;
+
+    if (username.trim().length > 0 && password.trim().length) {
+    } else {
+    }
   };
 
   render() {

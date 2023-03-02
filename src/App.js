@@ -7,18 +7,18 @@ import Login from "./components/Login"; //Login page.
 //---------
 //Main function:
 function App() {
-  // const [error, setError] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate(); //Used to redirect the user.
 
-  // function ERROR(msg) {
-  //   //Used to show any errors (if necessary.)
-  //   setError(msg); //Update the state to show the error.
+  function ERROR(msg) {
+    //Used to show any errors (if necessary.)
+    setError(msg); //Update the state to show the error.
 
-  //   setTimeout(() => {
-  //     //After some time,
-  //     setError(""); //clear the error
-  //   }, 2015);
-  // }
+    setTimeout(() => {
+      //After some time,
+      setError(""); //clear the error
+    }, 2015);
+  }
 
   function Logout() {
     //When loggin out
