@@ -35230,7 +35230,7 @@ class Login extends _react.default.Component {
         username: "",
         password: "",
         username_error_Msg: "",
-        password_error_msg: ""
+        password_error_Msg: ""
       }
     };
 
@@ -35268,38 +35268,29 @@ class Login extends _react.default.Component {
     } = this.state;
     let username_error_Msg = ""; //Used to determine what the user message says
 
-    const INPUT = _module.functions.Get_Label(id);
-    if (INPUT !== undefined) {
-      switch (id) {
-        case "password":
-          //If the input is password
-          INPUT.classList.remove("error");
-          break;
-        case "username":
-          //If the input is username
-          const Correct_Login = _module.functions.VerifyUsername(value);
-          if (Correct_Login === true) {
-            INPUT.classList.add("success"); //Add a classlist to it.
-            username_error_Msg = "Valid username"; //Update the username msg to tell the user.
-          } else {
-            INPUT.classList.remove("success"); //remove any possible success attribute it might have.
-            INPUT.classList.remove("error"); //remove any possible error attribute it might have.
-          }
+    const INPUT = _module.functions.Get_Label(id); //get the input
+    if (INPUT) {
+      INPUT.classList.remove("error"); //remove any errors it may have
 
-          break;
-        default:
-          //By default just return false.
-          return false;
-        //Although this should not happen
+      if (id === "username") {
+        const Admin_Login = _module.functions.VerifyUsername(value); //Verify that the inserted username is a(n) admin user.
+
+        if (Admin_Login) {
+          INPUT.classList.add("success"); //Tell the user that the input a success
+          username_error_Msg = "Valid username";
+        } else {
+          INPUT.classList.remove("success"); //Remove any success msg
+          _module.functions //Update the password input.
+          .Get_Label("password").classList.remove("success", "error");
+        }
       }
     } else {
       //Else,
       //The input could not have been found in the ["input-group"] class.
       //this should not happen.
 
-      console.error(
       //Tell the user.
-      id + " | could not be found within the 'input-group' class. \n Consider adding: [" + id + "] to the 'input-group' class.");
+      console.error(`${id} | could not be found within the 'input-group' class \n Consider adding: [${id}] to the 'input-group' class`);
       Error("Internal error"); //Let the user know what is up.
     }
 
@@ -35312,8 +35303,7 @@ class Login extends _react.default.Component {
         //keep all the original state that was here as well.
         [id]: value,
         //update any new values.
-
-        username_error_Msg: username_error_Msg //also update the message.
+        username_error_Msg //also update the message.
       }
     });
   };
@@ -35321,7 +35311,6 @@ class Login extends _react.default.Component {
   onSubmit = function (evt) {
     //Each time the form gets submitted.
     evt.preventDefault();
-    //TODO: FINISH THIS FUNCTION
     const {
       Error
     } = this.props; //Error passed down in props.
@@ -35339,53 +35328,46 @@ class Login extends _react.default.Component {
       user_input.classList.remove("error");
       pass_input.classList.remove("error");
       const success = _module.functions.Attempt_Login(username, password);
-      switch (success) {
-        case true:
-          {
-            //The login was a success
-            console.log("SUCCESS");
-            //Navigate to new page
+      if (success === true) {
+        //The login was a success
+        console.log("SUCCESS");
+        //Navigate to new page
+      } else {
+        let username_error_Msg = "";
+        let password_error_Msg = "";
+        switch (success) {
+          case "username":
+            {
+              //The username was not correct.
+              user_input.classList.add("error");
+              username_error_Msg = "Invalid usernme"; //Update the error label.
+              break;
+            }
+          case "password":
+            {
+              //The password was not correct.
+              pass_input.classList.add("error");
+              password_error_Msg = "Incorrect password"; //update the error label
+              break;
+            }
+          default:
+            //By default the function FAILED.
             break;
-          }
-        case "username":
-          {
-            //The username was not correct.
-            user_input.classList.add("error");
+          //end the loop.
+        }
 
-            //set/Update the state:
-            this.setState({
-              ...this.state,
-              //keep all the original state that was here as well.
-              LoginInfo: {
-                ...LoginInfo,
-                //keep all the original state that was here as well.
-                username_error_Msg: "Invalid username" //also update the message.
-              }
-            });
-
-            break;
+        //Update state:
+        this.setState({
+          ...this.state,
+          //keep all the original state that was here as well.
+          LoginInfo: {
+            ...LoginInfo,
+            //keep all the original state that was here as well.
+            username_error_Msg: username_error_Msg,
+            //update username message.
+            password_error_Msg: password_error_Msg //update password message
           }
-        case "password":
-          {
-            //The password was not correct.
-            pass_input.classList.add("error");
-            //set/Update the state:
-            this.setState({
-              ...this.state,
-              //keep all the original state that was here as well.
-              LoginInfo: {
-                ...LoginInfo,
-                //keep all the original state that was here as well.
-                password_error_Msg: "Incorrect password" //also update the message.
-              }
-            });
-
-            break;
-          }
-        default:
-          //The login was a bust.
-          console.log("FAILED", success);
-          break;
+        });
       }
     } else {
       //ELSE, the user did not input any information to some part form.
@@ -35439,7 +35421,7 @@ class Login extends _react.default.Component {
       value: this.state.LoginInfo.password //Controlled form input
     }), /*#__PURE__*/_react.default.createElement("span", {
       className: "msg"
-    }, this.state.LoginInfo.password_error_msg)), /*#__PURE__*/_react.default.createElement("button", {
+    }, this.state.LoginInfo.password_error_Msg)), /*#__PURE__*/_react.default.createElement("button", {
       type: "submit",
       className: "login-button"
     }, "Login"))));
@@ -35527,20 +35509,21 @@ _module.functions.Attempt_Login = function (username, password) {
   const user = username.trim();
   const pass = password.trim();
   const Verify_Username = _module.functions.VerifyUsername(user);
-  if (Verify_Username === true) {
+  const Verify_Password = _module.functions.VerifyPassword(user, pass);
+  if (Verify_Username === true && Verify_Password === true) {
     //Verify that the password is correct
-    const Verify_Password = _module.functions.VerifyPassword(user, pass);
-    if (Verify_Password === true) {
-      //Login
-      console.log("LOGGING IN");
-    } else {
-      //The password information was not correct
-      return "password";
-    }
+    //Login
+    console.log("LOGGING IN");
     return true;
   } else {
     //The login information was not correct
-    return "username";
+    if (Verify_Username === false) {
+      return "username";
+    }
+    if (Verify_Password === false) {
+      return "password";
+    }
+    return false;
   }
 };
 //
@@ -35676,7 +35659,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62950" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58314" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

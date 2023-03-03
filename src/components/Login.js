@@ -16,7 +16,7 @@ class Login extends React.Component {
         password: "",
 
         username_error_Msg: "",
-        password_error_msg: "",
+        password_error_Msg: "",
       },
     };
 
@@ -47,39 +47,31 @@ class Login extends React.Component {
     const { LoginInfo } = this.state;
     let username_error_Msg = ""; //Used to determine what the user message says
 
-    const INPUT = module.functions.Get_Label(id);
-    if (INPUT !== undefined) {
-      switch (id) {
-        case "password": //If the input is password
-          INPUT.classList.remove("error");
+    const INPUT = module.functions.Get_Label(id); //get the input
+    if (INPUT) {
+      INPUT.classList.remove("error"); //remove any errors it may have
 
-          break;
-        case "username": //If the input is username
-          const Correct_Login = module.functions.VerifyUsername(value);
+      if (id === "username") {
+        const Admin_Login = module.functions.VerifyUsername(value); //Verify that the inserted username is a(n) admin user.
 
-          if (Correct_Login === true) {
-            INPUT.classList.add("success"); //Add a classlist to it.
-            username_error_Msg = "Valid username"; //Update the username msg to tell the user.
-          } else {
-            INPUT.classList.remove("success"); //remove any possible success attribute it might have.
-            INPUT.classList.remove("error"); //remove any possible error attribute it might have.
-          }
-          break;
-        default:
-          //By default just return false.
-          return false; //Although this should not happen
+        if (Admin_Login) {
+          INPUT.classList.add("success"); //Tell the user that the input a success
+          username_error_Msg = "Valid username";
+        } else {
+          INPUT.classList.remove("success"); //Remove any success msg
+          module.functions //Update the password input.
+            .Get_Label("password")
+            .classList.remove("success", "error");
+        }
       }
     } else {
       //Else,
       //The input could not have been found in the ["input-group"] class.
       //this should not happen.
 
+      //Tell the user.
       console.error(
-        //Tell the user.
-        id +
-          " | could not be found within the 'input-group' class. \n Consider adding: [" +
-          id +
-          "] to the 'input-group' class."
+        `${id} | could not be found within the 'input-group' class \n Consider adding: [${id}] to the 'input-group' class`
       );
 
       Error("Internal error"); //Let the user know what is up.
@@ -91,8 +83,7 @@ class Login extends React.Component {
       LoginInfo: {
         ...LoginInfo, //keep all the original state that was here as well.
         [id]: value, //update any new values.
-
-        username_error_Msg: username_error_Msg, //also update the message.
+        username_error_Msg, //also update the message.
       },
     });
   };
@@ -100,7 +91,6 @@ class Login extends React.Component {
   onSubmit = function (evt) {
     //Each time the form gets submitted.
     evt.preventDefault();
-    //TODO: FINISH THIS FUNCTION
     const { Error } = this.props; //Error passed down in props.
     const { LoginInfo } = this.state;
     const { username, password } = LoginInfo;
@@ -114,50 +104,42 @@ class Login extends React.Component {
       pass_input.classList.remove("error");
 
       const success = module.functions.Attempt_Login(username, password);
-      switch (success) {
-        case true: {
-          //The login was a success
-          console.log("SUCCESS");
-          //Navigate to new page
-          break;
+      if (success === true) {
+        //The login was a success
+        console.log("SUCCESS");
+        //Navigate to new page
+      } else {
+        let username_error_Msg = "";
+        let password_error_Msg = "";
+
+        switch (success) {
+          case "username": {
+            //The username was not correct.
+            user_input.classList.add("error");
+            username_error_Msg = "Invalid usernme"; //Update the error label.
+            break;
+          }
+
+          case "password": {
+            //The password was not correct.
+            pass_input.classList.add("error");
+            password_error_Msg = "Incorrect password"; //update the error label
+            break;
+          }
+
+          default: //By default the function FAILED.
+            break; //end the loop.
         }
 
-        case "username": {
-          //The username was not correct.
-          user_input.classList.add("error");
-
-          //set/Update the state:
-          this.setState({
-            ...this.state, //keep all the original state that was here as well.
-            LoginInfo: {
-              ...LoginInfo, //keep all the original state that was here as well.
-              username_error_Msg: "Invalid username", //also update the message.
-            },
-          });
-          break;
-        }
-
-        case "password": {
-          //The password was not correct.
-          //TODO: The password error message was not showing up.
-          //TODO: Clean up code and possible replace this whole switch statement to external function.
-          pass_input.classList.add("error");
-
-          //set/Update the state:
-          this.setState({
-            ...this.state, //keep all the original state that was here as well.
-            LoginInfo: {
-              ...LoginInfo, //keep all the original state that was here as well.
-              password_error_Msg: "Incorrect password", //also update the message.
-            },
-          });
-          break;
-        }
-
-        default:
-          //The login was a bust.
-          console.log("FAILED", success);
-          break;
+        //Update state:
+        this.setState({
+          ...this.state, //keep all the original state that was here as well.
+          LoginInfo: {
+            ...LoginInfo, //keep all the original state that was here as well.
+            username_error_Msg: username_error_Msg, //update username message.
+            password_error_Msg: password_error_Msg, //update password message
+          },
+        });
       }
     } else {
       //ELSE, the user did not input any information to some part form.
@@ -210,7 +192,7 @@ class Login extends React.Component {
                 value={this.state.LoginInfo.password} //Controlled form input
               />
               <span className="msg">
-                {this.state.LoginInfo.password_error_msg}
+                {this.state.LoginInfo.password_error_Msg}
               </span>
             </div>
 
@@ -300,23 +282,25 @@ module.functions.Attempt_Login = function (username, password) {
   const pass = password.trim();
 
   const Verify_Username = module.functions.VerifyUsername(user);
+  const Verify_Password = module.functions.VerifyPassword(user, pass);
 
-  if (Verify_Username === true) {
+  if (Verify_Username === true && Verify_Password === true) {
     //Verify that the password is correct
-    const Verify_Password = module.functions.VerifyPassword(user, pass);
-
-    if (Verify_Password === true) {
-      //Login
-      console.log("LOGGING IN");
-    } else {
-      //The password information was not correct
-      return "password";
-    }
+    //Login
+    console.log("LOGGING IN");
 
     return true;
   } else {
     //The login information was not correct
-    return "username";
+    if (Verify_Username === false) {
+      return "username";
+    }
+
+    if (Verify_Password === false) {
+      return "password";
+    }
+
+    return false;
   }
 };
 //
