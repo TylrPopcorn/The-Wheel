@@ -4,6 +4,11 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import "../styles/styles.css";
 
 import Login from "./components/Login"; //Login page.
+
+const module = {
+  //Extra helpers to this file.
+  Error_Active: false,
+};
 //---------
 //Main function:
 function App() {
@@ -11,13 +16,19 @@ function App() {
   const navigate = useNavigate(); //Used to redirect the user.
 
   function ERROR(msg) {
-    //Used to show any errors (if necessary.)
-    setError(msg); //Update the state to show the error.
+    if (module.Error_Active === false) {
+      //Debounce
+      module.Error_Active = true;
 
-    setTimeout(() => {
-      //After some time,
-      setError(""); //clear the error
-    }, 3015);
+      //Used to show any errors (if necessary.)
+      setError(msg); //Update the state to show the error.
+
+      setTimeout(() => {
+        //After some time,
+        setError(""); //clear the error
+        module.Error_Active = false;
+      }, 3015);
+    }
   }
 
   function Logout() {

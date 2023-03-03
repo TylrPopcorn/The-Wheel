@@ -42,6 +42,7 @@ class Login extends React.Component {
 
   onChange = function (evt) {
     //Each time the form gets changed.
+    const { Error } = this.props; //Error passed down in props.
     const { id, value } = evt.target; //get the appropriate info from the form
     const { LoginInfo } = this.state;
     let username_error_Msg = ""; //Used to determine what the user message says
@@ -69,7 +70,19 @@ class Login extends React.Component {
           return false; //Although this should not happen
       }
     } else {
-      //Possibly show an error?
+      //Else,
+      //The input could not have been found in the ["input-group"] class.
+      //this should not happen.
+
+      console.error(
+        //Tell the user.
+        id +
+          " | could not be found within the 'input-group' class. \n Consider adding: [" +
+          id +
+          "] to the 'input-group' class."
+      );
+
+      Error("Internal error"); //Let the user know what is up.
     }
 
     //set/Update the state:
@@ -91,22 +104,49 @@ class Login extends React.Component {
     const { Error } = this.props; //Error passed down in props.
     const { username, password } = this.state.LoginInfo;
 
-    const Login_inputs = document.getElementsByClassName("input-group"); //Grab BOTH of the login inputs
+    const user_input = module.functions.Get_Label("username");
+    const pass_input = module.functions.Get_Label("password");
 
-    if (username.trim().length > 0 && password.trim().length) {
+    if (username.trim().length > 0 && password.trim().length > 0) {
+      //IF the form has some information within it.
+      user_input.classList.remove("error");
+      pass_input.classList.remove("error");
+
+      const success = module.functions.Attempt_Login(username, password);
+      switch (success) {
+        case true: {
+          //The login was a success
+          console.log("SUCCESS");
+          //Navigate to new page
+          break;
+        }
+
+        case "username": {
+          //The username was not correct.
+          user_input.classList.add("error");
+          break;
+        }
+
+        default:
+          //The login was a bust.
+          console.log("FAILED", success);
+          break;
+      }
     } else {
       Error("Please provide valid login information"); //Invoke the error function
 
       if (username.trim().length == 0) {
-        Login_inputs[0].classList.add("error");
+        user_input.classList.add("error");
       }
 
       if (password.trim().length == 0) {
-        Login_inputs[1].classList.add("error");
+        pass_input.classList.add("error");
       }
     }
   };
-
+  //---
+  //
+  //Render to the screen:----
   render() {
     //Render items to the screen for the user to see:
     return (
@@ -171,27 +211,19 @@ module.admin_LOGIN = [
 module.functions.Get_Label = function (t) {
   //This function will retrieve and validate the required input label.
   const Login_inputs = document.getElementsByClassName("input-group"); //Grab BOTH of the login inputs
-  //TODO: I WAS REFACTORING THIS SWITCH STATEMENT BELOW:
-  switch (t) {
-    case "password":
-      for (let input of Login_inputs) {
-        if (input.classList.contains("input-password")) {
-          return input;
-        }
-      }
 
-      return undefined;
-    case "username":
-      for (let input of Login_inputs) {
-        if (input.classList.contains("input-username")) {
-          return input;
-        }
+  if (t !== "ALL") {
+    //IF the input does NOT need a specific input
+    for (let input of Login_inputs) {
+      if (input.classList.contains("input-" + t)) {
+        return input; //return the corresponding input.
       }
-
-      return undefined;
-    default: //This should only happen if a label cannot be found.
-      return undefined;
+    }
+  } else {
+    return Login_inputs; //Return all of the inputs.
   }
+
+  return undefined; //nothing could have been found so return nothing.
 };
 
 module.functions.VerifyUsername = function (v) {
@@ -210,6 +242,27 @@ module.functions.VerifyUsername = function (v) {
   }
 
   return false; //return false if the username was not found.
+};
+
+module.functions.Attempt_Login = function (username, password) {
+  //EACH time the user will attempt to login with some kind of information.
+  //This function will verify if the user has valid login information and login them in or not.
+
+  const user = username.trim();
+  const pass = password.trim();
+
+  const Verify_Username = module.functions.VerifyUsername(user);
+
+  if (Verify_Username === true) {
+    //Verify that the password is correct
+    //IF not correct, tell the user
+    //ELSE, Login
+
+    return true;
+  } else {
+    //The login information was not correct
+    return "username";
+  }
 };
 //
 //

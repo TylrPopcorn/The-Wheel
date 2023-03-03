@@ -35257,6 +35257,9 @@ class Login extends _react.default.Component {
   onChange = function (evt) {
     //Each time the form gets changed.
     const {
+      Error
+    } = this.props; //Error passed down in props.
+    const {
       id,
       value
     } = evt.target; //get the appropriate info from the form
@@ -35290,7 +35293,14 @@ class Login extends _react.default.Component {
         //Although this should not happen
       }
     } else {
-      //Possibly show an error?
+      //Else,
+      //The input could not have been found in the ["input-group"] class.
+      //this should not happen.
+
+      console.error(
+      //Tell the user.
+      id + " | could not be found within the 'input-group' class. \n Consider adding: [" + id + "] to the 'input-group' class.");
+      Error("Internal error"); //Let the user know what is up.
     }
 
     //set/Update the state:
@@ -35319,19 +35329,46 @@ class Login extends _react.default.Component {
       username,
       password
     } = this.state.LoginInfo;
-    const Login_inputs = document.getElementsByClassName("input-group"); //Grab BOTH of the login inputs
-
-    if (username.trim().length > 0 && password.trim().length) {} else {
+    const user_input = _module.functions.Get_Label("username");
+    const pass_input = _module.functions.Get_Label("password");
+    if (username.trim().length > 0 && password.trim().length > 0) {
+      //IF the form has some information within it.
+      user_input.classList.remove("error");
+      pass_input.classList.remove("error");
+      const success = _module.functions.Attempt_Login(username, password);
+      switch (success) {
+        case true:
+          {
+            //The login was a success
+            console.log("SUCCESS");
+            //Navigate to new page
+            break;
+          }
+        case "username":
+          {
+            //The username was not correct.
+            user_input.classList.add("error");
+            break;
+          }
+        default:
+          //The login was a bust.
+          console.log("FAILED", success);
+          break;
+      }
+    } else {
       Error("Please provide valid login information"); //Invoke the error function
 
       if (username.trim().length == 0) {
-        Login_inputs[0].classList.add("error");
+        user_input.classList.add("error");
       }
       if (password.trim().length == 0) {
-        Login_inputs[1].classList.add("error");
+        pass_input.classList.add("error");
       }
     }
   };
+  //---
+  //
+  //Render to the screen:----
   render() {
     //Render items to the screen for the user to see:
     return /*#__PURE__*/_react.default.createElement("div", {
@@ -35397,27 +35434,21 @@ _module.admin_LOGIN = [
 _module.functions.Get_Label = function (t) {
   //This function will retrieve and validate the required input label.
   const Login_inputs = document.getElementsByClassName("input-group"); //Grab BOTH of the login inputs
-  //TODO: I WAS REFACTORING THIS SWITCH STATEMENT BELOW:
-  switch (t) {
-    case "password":
-      for (let input of Login_inputs) {
-        if (input.classList.contains("input-password")) {
-          return input;
-        }
+
+  if (t !== "ALL") {
+    //IF the input does NOT need a specific input
+    for (let input of Login_inputs) {
+      if (input.classList.contains("input-" + t)) {
+        return input; //return the corresponding input.
       }
-      return undefined;
-    case "username":
-      for (let input of Login_inputs) {
-        if (input.classList.contains("input-username")) {
-          return input;
-        }
-      }
-      return undefined;
-    default:
-      //This should only happen if a label cannot be found.
-      return undefined;
+    }
+  } else {
+    return Login_inputs; //Return all of the inputs.
   }
+
+  return undefined; //nothing could have been found so return nothing.
 };
+
 _module.functions.VerifyUsername = function (v) {
   //This function will verify that the inputted username is correct.
   for (let x of _module.admin_LOGIN) {
@@ -35433,6 +35464,25 @@ _module.functions.VerifyUsername = function (v) {
     }
   }
   return false; //return false if the username was not found.
+};
+
+_module.functions.Attempt_Login = function (username, password) {
+  //EACH time the user will attempt to login with some kind of information.
+  //This function will verify if the user has valid login information and login them in or not.
+
+  const user = username.trim();
+  const pass = password.trim();
+  const Verify_Username = _module.functions.VerifyUsername(user);
+  if (Verify_Username === true) {
+    //Verify that the password is correct
+    //IF not correct, tell the user
+    //ELSE, Login
+
+    return true;
+  } else {
+    //The login information was not correct
+    return "username";
+  }
 };
 //
 //
@@ -35455,6 +35505,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 //Login page.
+
+const _module = {
+  //Extra helpers to this file.
+  Error_Active: false
+};
 //---------
 //Main function:
 function App() {
@@ -35462,13 +35517,19 @@ function App() {
   const navigate = (0, _reactRouterDom.useNavigate)(); //Used to redirect the user.
 
   function ERROR(msg) {
-    //Used to show any errors (if necessary.)
-    setError(msg); //Update the state to show the error.
+    if (_module.Error_Active === false) {
+      //Debounce
+      _module.Error_Active = true;
 
-    setTimeout(() => {
-      //After some time,
-      setError(""); //clear the error
-    }, 3015);
+      //Used to show any errors (if necessary.)
+      setError(msg); //Update the state to show the error.
+
+      setTimeout(() => {
+        //After some time,
+        setError(""); //clear the error
+        _module.Error_Active = false;
+      }, 3015);
+    }
   }
   function Logout() {
     //When loggin out
