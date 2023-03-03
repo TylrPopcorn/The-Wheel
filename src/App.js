@@ -7,7 +7,7 @@ import Login from "./components/Login"; //Login page.
 
 const module = {
   //Extra helpers to this file.
-  Error_Active: false,
+  Error_Active: false, //Debounce.
 };
 //---------
 //Main function:
@@ -16,9 +16,9 @@ function App() {
   const navigate = useNavigate(); //Used to redirect the user.
 
   function ERROR(msg) {
+    //Debounce
     if (module.Error_Active === false) {
-      //Debounce
-      module.Error_Active = true;
+      module.Error_Active = true; //activate the debounce.
 
       //Used to show any errors (if necessary.)
       setError(msg); //Update the state to show the error.
@@ -26,7 +26,7 @@ function App() {
       setTimeout(() => {
         //After some time,
         setError(""); //clear the error
-        module.Error_Active = false;
+        module.Error_Active = false; //turn off the debounce
       }, 3015);
     }
   }

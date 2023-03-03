@@ -35326,9 +35326,12 @@ class Login extends _react.default.Component {
       Error
     } = this.props; //Error passed down in props.
     const {
+      LoginInfo
+    } = this.state;
+    const {
       username,
       password
-    } = this.state.LoginInfo;
+    } = LoginInfo;
     const user_input = _module.functions.Get_Label("username");
     const pass_input = _module.functions.Get_Label("password");
     if (username.trim().length > 0 && password.trim().length > 0) {
@@ -35348,6 +35351,35 @@ class Login extends _react.default.Component {
           {
             //The username was not correct.
             user_input.classList.add("error");
+
+            //set/Update the state:
+            this.setState({
+              ...this.state,
+              //keep all the original state that was here as well.
+              LoginInfo: {
+                ...LoginInfo,
+                //keep all the original state that was here as well.
+                username_error_Msg: "Invalid username" //also update the message.
+              }
+            });
+
+            break;
+          }
+        case "password":
+          {
+            //The password was not correct.
+            pass_input.classList.add("error");
+            //set/Update the state:
+            this.setState({
+              ...this.state,
+              //keep all the original state that was here as well.
+              LoginInfo: {
+                ...LoginInfo,
+                //keep all the original state that was here as well.
+                password_error_Msg: "Incorrect password" //also update the message.
+              }
+            });
+
             break;
           }
         default:
@@ -35356,13 +35388,17 @@ class Login extends _react.default.Component {
           break;
       }
     } else {
+      //ELSE, the user did not input any information to some part form.
       Error("Please provide valid login information"); //Invoke the error function
 
+      //IF the user input is still empty then
       if (username.trim().length == 0) {
-        user_input.classList.add("error");
+        user_input.classList.add("error"); //show the user which input is wrong.
       }
+
+      //IF the pass input is still empty then
       if (password.trim().length == 0) {
-        pass_input.classList.add("error");
+        pass_input.classList.add("error"); //show the user which input is wrong.
       }
     }
   };
@@ -35466,6 +35502,24 @@ _module.functions.VerifyUsername = function (v) {
   return false; //return false if the username was not found.
 };
 
+_module.functions.VerifyPassword = function (u, p) {
+  //This function will verify that the inputted password is correct.
+  for (let x of _module.admin_LOGIN) {
+    //Loop through all of the correct Logins
+    if (x.username != null && x.password != null) {
+      //IF the child has a username child then
+      const username = x.username.toString(); //grab the username of THIS CURRENT child in the rotation.
+      const password = x.password.toString(); //grab the password of THIS CURRENT child
+
+      if (u == username && p == password) {
+        return true; //correct password.
+      }
+    }
+  }
+
+  return false; //return false if the username was not found.
+};
+
 _module.functions.Attempt_Login = function (username, password) {
   //EACH time the user will attempt to login with some kind of information.
   //This function will verify if the user has valid login information and login them in or not.
@@ -35475,9 +35529,14 @@ _module.functions.Attempt_Login = function (username, password) {
   const Verify_Username = _module.functions.VerifyUsername(user);
   if (Verify_Username === true) {
     //Verify that the password is correct
-    //IF not correct, tell the user
-    //ELSE, Login
-
+    const Verify_Password = _module.functions.VerifyPassword(user, pass);
+    if (Verify_Password === true) {
+      //Login
+      console.log("LOGGING IN");
+    } else {
+      //The password information was not correct
+      return "password";
+    }
     return true;
   } else {
     //The login information was not correct
@@ -35508,7 +35567,7 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 
 const _module = {
   //Extra helpers to this file.
-  Error_Active: false
+  Error_Active: false //Debounce.
 };
 //---------
 //Main function:
@@ -35517,9 +35576,9 @@ function App() {
   const navigate = (0, _reactRouterDom.useNavigate)(); //Used to redirect the user.
 
   function ERROR(msg) {
+    //Debounce
     if (_module.Error_Active === false) {
-      //Debounce
-      _module.Error_Active = true;
+      _module.Error_Active = true; //activate the debounce.
 
       //Used to show any errors (if necessary.)
       setError(msg); //Update the state to show the error.
@@ -35527,7 +35586,7 @@ function App() {
       setTimeout(() => {
         //After some time,
         setError(""); //clear the error
-        _module.Error_Active = false;
+        _module.Error_Active = false; //turn off the debounce
       }, 3015);
     }
   }
