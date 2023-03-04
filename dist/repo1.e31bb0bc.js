@@ -35266,27 +35266,30 @@ class Login extends _react.default.Component {
     const {
       LoginInfo
     } = this.state;
-    let username_error_Msg = ""; //Used to determine what the user message says
+    let {
+      username_error_Msg,
+      password_error_Msg
+    } = LoginInfo; //Used to determine what the user message says
 
     const INPUT = _module.functions.Get_Label(id); //get the input
     if (INPUT) {
       INPUT.classList.remove("error"); //remove any errors it may have
-
+      password_error_Msg = "";
       if (id === "username") {
         const Admin_Login = _module.functions.VerifyUsername(value); //Verify that the inserted username is a(n) admin user.
 
         if (Admin_Login) {
           INPUT.classList.add("success"); //Tell the user that the input a success
-          username_error_Msg = "Valid username";
+          username_error_Msg = "Valid username"; //update the user msg
         } else {
           INPUT.classList.remove("success"); //Remove any success msg
+          username_error_Msg = "";
           _module.functions //Update the password input.
           .Get_Label("password").classList.remove("success", "error");
         }
       }
     } else {
-      //Else,
-      //The input could not have been found in the ["input-group"] class.
+      //Else, The input could not have been found in the ["input-group"] class.
       //this should not happen.
 
       //Tell the user.
@@ -35301,16 +35304,18 @@ class Login extends _react.default.Component {
       LoginInfo: {
         ...LoginInfo,
         //keep all the original state that was here as well.
-        [id]: value,
+        [id]: value.trim(),
         //update any new values.
-        username_error_Msg //also update the message.
+        username_error_Msg,
+        //also update the message.
+        password_error_Msg
       }
     });
   };
-
   onSubmit = function (evt) {
     //Each time the form gets submitted.
     evt.preventDefault();
+    //vars:
     const {
       Error
     } = this.props; //Error passed down in props.
@@ -35323,65 +35328,62 @@ class Login extends _react.default.Component {
     } = LoginInfo;
     const user_input = _module.functions.Get_Label("username");
     const pass_input = _module.functions.Get_Label("password");
-    if (username.trim().length > 0 && password.trim().length > 0) {
-      //IF the form has some information within it.
-      user_input.classList.remove("error");
-      pass_input.classList.remove("error");
-      const success = _module.functions.Attempt_Login(username, password);
-      if (success === true) {
-        //The login was a success
-        console.log("SUCCESS");
-        //Navigate to new page
-      } else {
-        let username_error_Msg = "";
-        let password_error_Msg = "";
-        switch (success) {
-          case "username":
-            {
-              //The username was not correct.
-              user_input.classList.add("error");
-              username_error_Msg = "Invalid usernme"; //Update the error label.
-              break;
-            }
-          case "password":
-            {
-              //The password was not correct.
-              pass_input.classList.add("error");
-              password_error_Msg = "Incorrect password"; //update the error label
-              break;
-            }
-          default:
-            //By default the function FAILED.
-            break;
-          //end the loop.
-        }
+    if (!username.trim() || !password.trim()) {
+      //If the user has not inputted any information.
+      Error("Please provide valid login information"); //Notify the user
 
-        //Update state:
-        this.setState({
-          ...this.state,
-          //keep all the original state that was here as well.
-          LoginInfo: {
-            ...LoginInfo,
-            //keep all the original state that was here as well.
-            username_error_Msg: username_error_Msg,
-            //update username message.
-            password_error_Msg: password_error_Msg //update password message
-          }
-        });
+      //If the username input was left blank:
+      if (!username.trim()) {
+        user_input.classList.add("error"); //show the error.
       }
+
+      //If the password input was left blank:
+      if (!password.trim()) {
+        pass_input.classList.add("error");
+      }
+      return; //end the whole func here.
+    }
+    //.
+    user_input.classList.remove("error");
+    pass_input.classList.remove("error");
+    const success = _module.functions.Attempt_Login(username, password); //Attempt to login.
+    if (success === true) {
+      //IF the login was a success
+      console.log("SUCCESS");
+      //Navigate to new page?
     } else {
-      //ELSE, the user did not input any information to some part form.
-      Error("Please provide valid login information"); //Invoke the error function
-
-      //IF the user input is still empty then
-      if (username.trim().length == 0) {
-        user_input.classList.add("error"); //show the user which input is wrong.
+      //Else, the login was a bust. (FAILURE)
+      let username_error_Msg = _module.functions.VerifyUsername(username) === true ? "Valid username" : ""; //Used to help show the user what is wrong.
+      console.log(username_error_Msg);
+      let password_error_Msg = "";
+      switch (success) {
+        case "username":
+          //IF the username was not valid,
+          user_input.classList.add("error");
+          username_error_Msg = "Invalid username"; //tell the user
+          break;
+        case "password":
+          //IF the password was not valid,
+          pass_input.classList.add("error");
+          password_error_Msg = "Incorrect password"; //tell the user.
+          break;
+        default:
+          return;
+        //IF nothing was found, just return nothing.
       }
 
-      //IF the pass input is still empty then
-      if (password.trim().length == 0) {
-        pass_input.classList.add("error"); //show the user which input is wrong.
-      }
+      //Update state:
+      this.setState({
+        ...this.state,
+        //keep all the original state that was here as well.
+        LoginInfo: {
+          ...LoginInfo,
+          //keep all the original state that was here as well.
+          username_error_Msg: username_error_Msg,
+          //update username message.
+          password_error_Msg: password_error_Msg //update password message
+        }
+      });
     }
   };
   //---
@@ -35428,12 +35430,13 @@ class Login extends _react.default.Component {
     //[ CREDIT TO WDS:| https://www.youtube.com/watch?v=reumU4CvruA ]
   }
 }
+//
 //-------------
 //Extra info:
 _module.admin_LOGIN = [
 //All of the qualified login names and their corresponding passwords:
 {
-  username: "CosmicSpectrum",
+  username: "MidnightMist",
   password: "12345"
 }, {
   username: "PixelPenguin",
@@ -35442,7 +35445,7 @@ _module.admin_LOGIN = [
   username: "ElectricHaze",
   password: "0112131415"
 }, {
-  username: "MidnightMist",
+  username: "CosmicSpectrum",
   password: "5161718192"
 }];
 
@@ -35475,7 +35478,7 @@ _module.functions.VerifyUsername = function (v) {
       //IF the child has a username child then
       const username = x.username.toString(); //grab the username of THIS CURRENT child in the rotation.
 
-      if (v == username) {
+      if (v.trim() == username) {
         //If the username input matches the current username in the loop.
         return true;
       }
