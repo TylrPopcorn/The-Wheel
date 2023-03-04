@@ -76,6 +76,7 @@ class Login extends React.Component {
       );
 
       Error("Internal error"); //Let the user know what is up.
+      return;
     }
 
     //set/Update the state:
@@ -95,11 +96,14 @@ class Login extends React.Component {
     evt.preventDefault();
     //vars:
     const { Error } = this.props; //Error passed down in props.
+    const { navigate } = this.props; //Used to direct to a new page.
     const { LoginInfo } = this.state;
     const { username, password } = LoginInfo;
 
     const user_input = module.functions.Get_Label("username");
     const pass_input = module.functions.Get_Label("password");
+    const submit_button = module.functions.Get_Label("submit");
+    console.log(submit_button);
 
     if (!username.trim() || !password.trim()) {
       //If the user has not inputted any information.
@@ -107,11 +111,13 @@ class Login extends React.Component {
 
       //If the username input was left blank:
       if (!username.trim()) {
+        //user_input.classList.remove("success");
         user_input.classList.add("error"); //show the error.
       }
 
       //If the password input was left blank:
       if (!password.trim()) {
+        //pass_input.classList.remove("success");
         pass_input.classList.add("error");
       }
 
@@ -124,16 +130,19 @@ class Login extends React.Component {
     const success = module.functions.Attempt_Login(username, password); //Attempt to login.
     if (success === true) {
       //IF the login was a success
-      console.log("SUCCESS");
-      //Navigate to new page?
+      console.log(`Welcome - ${username}!`);
+
+      setTimeout(() => {
+        console.log("Redirected.");
+        //navigate("/wheel"); //Redirect the user.
+      }, 15);
     } else {
       //Else, the login was a bust. (FAILURE)
-      let username_error_Msg =
-        module.functions.VerifyUsername(username) === true
+      let username_error_Msg = //Used to show the user if the username is wong
+        module.functions.VerifyUsername(username) === true //verify if the username is correct
           ? "Valid username"
-          : ""; //Used to help show the user what is wrong.
-      console.log(username_error_Msg);
-      let password_error_Msg = "";
+          : "";
+      let password_error_Msg = ""; //Used to show the user if the password is wrong
 
       switch (success) {
         case "username": //IF the username was not valid,
@@ -147,7 +156,7 @@ class Login extends React.Component {
           break;
 
         default:
-          return; //IF nothing was found, just return nothing.
+          break; //IF nothing was found, just return nothing.
       }
 
       //Update state:
@@ -202,7 +211,7 @@ class Login extends React.Component {
             </div>
 
             {/*SUBMIT BUTTON*/}
-            <button type="submit" className="login-button">
+            <button type="submit" className="login-button input-submit">
               Login
             </button>
           </form>
@@ -229,6 +238,10 @@ module.admin_LOGIN = [
 module.functions.Get_Label = function (t) {
   //This function will retrieve and validate the required input label.
   const Login_inputs = document.getElementsByClassName("input-group"); //Grab BOTH of the login inputs
+  //TODO: FIGURE OUT HOW TO GET MORE THAN ONE CLASS?
+  let selector = "input-submit input-group";
+  let test = document.getElementsByClassName(selector);
+  console.log(test);
 
   if (t !== "ALL") {
     //IF the input does NOT need a specific input
@@ -286,24 +299,21 @@ module.functions.Attempt_Login = function (username, password) {
 
   const user = username.trim();
   const pass = password.trim();
+  //----
+  const Verify_Username = module.functions.VerifyUsername(user); //Verify if the username is correct.
+  const Verify_Password = module.functions.VerifyPassword(user, pass); //Verify if the password is correct.
 
-  const Verify_Username = module.functions.VerifyUsername(user);
-  const Verify_Password = module.functions.VerifyPassword(user, pass);
-
+  //IF the user and password are correct:
   if (Verify_Username === true && Verify_Password === true) {
-    //Verify that the password is correct
-    //Login
-    console.log("LOGGING IN");
-
     return true;
   } else {
-    //The login information was not correct
+    //ELSE, The login information was not correct
     if (Verify_Username === false) {
-      return "username";
+      return "username"; //return a 'code' for other functions to deal with.
     }
 
     if (Verify_Password === false) {
-      return "password";
+      return "password"; //return a 'code' for other functions to deal with.
     }
 
     return false;

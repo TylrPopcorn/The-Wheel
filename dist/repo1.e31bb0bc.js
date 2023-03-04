@@ -35295,6 +35295,7 @@ class Login extends _react.default.Component {
       //Tell the user.
       console.error(`${id} | could not be found within the 'input-group' class \n Consider adding: [${id}] to the 'input-group' class`);
       Error("Internal error"); //Let the user know what is up.
+      return;
     }
 
     //set/Update the state:
@@ -35320,6 +35321,9 @@ class Login extends _react.default.Component {
       Error
     } = this.props; //Error passed down in props.
     const {
+      navigate
+    } = this.props; //Used to direct to a new page.
+    const {
       LoginInfo
     } = this.state;
     const {
@@ -35328,17 +35332,21 @@ class Login extends _react.default.Component {
     } = LoginInfo;
     const user_input = _module.functions.Get_Label("username");
     const pass_input = _module.functions.Get_Label("password");
+    const submit_button = _module.functions.Get_Label("submit");
+    console.log(submit_button);
     if (!username.trim() || !password.trim()) {
       //If the user has not inputted any information.
       Error("Please provide valid login information"); //Notify the user
 
       //If the username input was left blank:
       if (!username.trim()) {
+        //user_input.classList.remove("success");
         user_input.classList.add("error"); //show the error.
       }
 
       //If the password input was left blank:
       if (!password.trim()) {
+        //pass_input.classList.remove("success");
         pass_input.classList.add("error");
       }
       return; //end the whole func here.
@@ -35349,13 +35357,19 @@ class Login extends _react.default.Component {
     const success = _module.functions.Attempt_Login(username, password); //Attempt to login.
     if (success === true) {
       //IF the login was a success
-      console.log("SUCCESS");
-      //Navigate to new page?
+      console.log(`Welcome - ${username}!`);
+      setTimeout(() => {
+        console.log("Redirected.");
+        //navigate("/wheel"); //Redirect the user.
+      }, 15);
     } else {
       //Else, the login was a bust. (FAILURE)
-      let username_error_Msg = _module.functions.VerifyUsername(username) === true ? "Valid username" : ""; //Used to help show the user what is wrong.
-      console.log(username_error_Msg);
-      let password_error_Msg = "";
+      let username_error_Msg =
+      //Used to show the user if the username is wong
+      _module.functions.VerifyUsername(username) === true //verify if the username is correct
+      ? "Valid username" : "";
+      let password_error_Msg = ""; //Used to show the user if the password is wrong
+
       switch (success) {
         case "username":
           //IF the username was not valid,
@@ -35368,7 +35382,7 @@ class Login extends _react.default.Component {
           password_error_Msg = "Incorrect password"; //tell the user.
           break;
         default:
-          return;
+          break;
         //IF nothing was found, just return nothing.
       }
 
@@ -35425,7 +35439,7 @@ class Login extends _react.default.Component {
       className: "msg"
     }, this.state.LoginInfo.password_error_Msg)), /*#__PURE__*/_react.default.createElement("button", {
       type: "submit",
-      className: "login-button"
+      className: "login-button input-submit"
     }, "Login"))));
     //[ CREDIT TO WDS:| https://www.youtube.com/watch?v=reumU4CvruA ]
   }
@@ -35455,7 +35469,10 @@ _module.admin_LOGIN = [
 _module.functions.Get_Label = function (t) {
   //This function will retrieve and validate the required input label.
   const Login_inputs = document.getElementsByClassName("input-group"); //Grab BOTH of the login inputs
-
+  //TODO: FIGURE OUT HOW TO GET MORE THAN ONE CLASS?
+  let selector = "input-submit input-group";
+  let test = document.getElementsByClassName(selector);
+  console.log(test);
   if (t !== "ALL") {
     //IF the input does NOT need a specific input
     for (let input of Login_inputs) {
@@ -35511,21 +35528,23 @@ _module.functions.Attempt_Login = function (username, password) {
 
   const user = username.trim();
   const pass = password.trim();
-  const Verify_Username = _module.functions.VerifyUsername(user);
-  const Verify_Password = _module.functions.VerifyPassword(user, pass);
+  //----
+  const Verify_Username = _module.functions.VerifyUsername(user); //Verify if the username is correct.
+  const Verify_Password = _module.functions.VerifyPassword(user, pass); //Verify if the password is correct.
+
+  //IF the user and password are correct:
   if (Verify_Username === true && Verify_Password === true) {
-    //Verify that the password is correct
-    //Login
-    console.log("LOGGING IN");
     return true;
   } else {
-    //The login information was not correct
+    //ELSE, The login information was not correct
     if (Verify_Username === false) {
-      return "username";
+      return "username"; //return a 'code' for other functions to deal with.
     }
+
     if (Verify_Password === false) {
-      return "password";
+      return "password"; //return a 'code' for other functions to deal with.
     }
+
     return false;
   }
 };
