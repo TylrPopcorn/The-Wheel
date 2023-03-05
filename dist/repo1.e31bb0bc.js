@@ -35334,6 +35334,8 @@ class Login extends _react.default.Component {
     const pass_input = _module.functions.Get_Label("password");
     const submit_button = _module.functions.Get_Label("submit");
     console.log(submit_button);
+    //TODO: HIDE THE SUBMIT BUTTON
+
     if (!username.trim() || !password.trim()) {
       //If the user has not inputted any information.
       Error("Please provide valid login information"); //Notify the user
@@ -35360,6 +35362,7 @@ class Login extends _react.default.Component {
       console.log(`Welcome - ${username}!`);
       setTimeout(() => {
         console.log("Redirected.");
+
         //navigate("/wheel"); //Redirect the user.
       }, 15);
     } else {
@@ -35398,6 +35401,8 @@ class Login extends _react.default.Component {
           password_error_Msg: password_error_Msg //update password message
         }
       });
+
+      //TODO: SHOW THE SUBMIT BUTTON
     }
   };
   //---
@@ -35468,23 +35473,31 @@ _module.admin_LOGIN = [
 //Extra functions to help the main component:
 _module.functions.Get_Label = function (t) {
   //This function will retrieve and validate the required input label.
-  const Login_inputs = document.getElementsByClassName("input-group"); //Grab BOTH of the login inputs
-  //TODO: FIGURE OUT HOW TO GET MORE THAN ONE CLASS?
-  let selector = "input-submit input-group";
-  let test = document.getElementsByClassName(selector);
-  console.log(test);
-  if (t !== "ALL") {
-    //IF the input does NOT need a specific input
-    for (let input of Login_inputs) {
-      if (input.classList.contains("input-" + t)) {
-        return input; //return the corresponding input.
-      }
+
+  const selectors = {
+    //Used to determine which input goes to which class.
+    username: ".input-username",
+    password: ".input-password",
+    submit: ".input-submit"
+  };
+  const selector = selectors[t];
+  if (t === "ALL") {
+    //IF ALL of the selectors are needed
+    const data = {};
+    for (let x in selectors) {
+      data[x] = document.querySelector(selectors[x]); //Add all of the selectors to the data about to be sent back
     }
-  } else {
-    return Login_inputs; //Return all of the inputs.
+
+    return data; //Send back ALL of the selectors.
   }
 
-  return undefined; //nothing could have been found so return nothing.
+  if (selector === undefined) {
+    //IF the selector could not be found
+    return false; //return false
+  }
+
+  //Else,
+  return document.querySelector(selector); //return the corresponding class.
 };
 
 _module.functions.VerifyUsername = function (v) {
@@ -35534,6 +35547,7 @@ _module.functions.Attempt_Login = function (username, password) {
 
   //IF the user and password are correct:
   if (Verify_Username === true && Verify_Password === true) {
+    //TODO: Add a token
     return true;
   } else {
     //ELSE, The login information was not correct
