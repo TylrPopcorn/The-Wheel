@@ -35333,9 +35333,6 @@ class Login extends _react.default.Component {
     const user_input = _module.functions.Get_Label("username");
     const pass_input = _module.functions.Get_Label("password");
     const submit_button = _module.functions.Get_Label("submit");
-    console.log(submit_button);
-    //TODO: HIDE THE SUBMIT BUTTON
-
     if (!username.trim() || !password.trim()) {
       //If the user has not inputted any information.
       Error("Please provide valid login information"); //Notify the user
@@ -35356,14 +35353,16 @@ class Login extends _react.default.Component {
     //.
     user_input.classList.remove("error");
     pass_input.classList.remove("error");
+    submit_button.style.visibility = "hidden"; //Hide the button
+
     const success = _module.functions.Attempt_Login(username, password); //Attempt to login.
     if (success === true) {
       //IF the login was a success
       console.log(`Welcome - ${username}!`);
       setTimeout(() => {
         console.log("Redirected.");
-
-        //navigate("/wheel"); //Redirect the user.
+        submit_button.style.visibility = "visible"; //show the button
+        navigate("/wheel"); //Redirect the user.
       }, 15);
     } else {
       //Else, the login was a bust. (FAILURE)
@@ -35402,7 +35401,9 @@ class Login extends _react.default.Component {
         }
       });
 
-      //TODO: SHOW THE SUBMIT BUTTON
+      setTimeout(() => {
+        submit_button.style.visibility = "visible"; //show the button
+      }, 100);
     }
   };
   //---
@@ -35547,7 +35548,16 @@ _module.functions.Attempt_Login = function (username, password) {
 
   //IF the user and password are correct:
   if (Verify_Username === true && Verify_Password === true) {
-    //TODO: Add a token
+    if (localStorage.getItem("token") == null) {
+      //IF there is not already a token made
+      const token = [{
+        username: user,
+        password: pass
+      }, "secret_Message", {
+        expiresIn: "1h"
+      }];
+      localStorage.setItem("token", token);
+    }
     return true;
   } else {
     //ELSE, The login information was not correct
