@@ -12,8 +12,8 @@ body {
 }
 
 .full-screen-container {
-  /* background-image: url("https://media.discordapp.net/attachments/978365758432235580/1060340993351745567/deema44-67f6bc37-7b2f-402c-b205-024621907200.png"); */
-  background-image: url("https://cdn.discordapp.com/attachments/978365758432235580/1024291082235826256/unknown.png");
+  background-image: url("https://media.discordapp.net/attachments/978365758432235580/1060340993351745567/deema44-67f6bc37-7b2f-402c-b205-024621907200.png");
+  /* background-image: url("https://cdn.discordapp.com/attachments/978365758432235580/1024291082235826256/unknown.png"); */ /*//for fun */
   height: 105vh;
   width: 100vw;
   background-size: cover;
