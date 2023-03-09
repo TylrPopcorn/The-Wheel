@@ -4,6 +4,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import "../styles/styles.css";
 
 import Login from "./components/Login"; //Login page.
+import Wheel from "./components/Wheel"; //Main page.
 
 const module = {
   //Extra helpers to this file.
@@ -49,11 +50,7 @@ function App() {
         {/* Routes */}
         <Route path="/" element={<Login navigate={navigate} Error={ERROR} />} />
 
-        <Route
-          exact
-          path="wheel"
-          //element={}
-        />
+        <Route exact path="wheel" element={<Wheel navigate={navigate} />} />
       </Routes>
     </div>
   );

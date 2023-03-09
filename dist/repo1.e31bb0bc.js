@@ -35578,6 +35578,24 @@ _module.functions.Attempt_Login = function (username, password) {
 ///-------------------------exports:
 var _default = Login;
 exports.default = _default;
+},{"react":"node_modules/react/index.js"}],"src/components/Wheel.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _react = _interopRequireDefault(require("react"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+const Wheel = props => {
+  return /*#__PURE__*/_react.default.createElement("div", {
+    className: "WHEEL"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "wheel-container"
+  }, /*#__PURE__*/_react.default.createElement("h2", null, "Test"), /*#__PURE__*/_react.default.createElement("h2", null, "Test"), /*#__PURE__*/_react.default.createElement("h2", null, "Test"), /*#__PURE__*/_react.default.createElement("h2", null, "Test"), /*#__PURE__*/_react.default.createElement("h2", null, "Test")));
+};
+var _default = Wheel;
+exports.default = _default;
 },{"react":"node_modules/react/index.js"}],"src/App.js":[function(require,module,exports) {
 "use strict";
 
@@ -35589,10 +35607,12 @@ var _react = _interopRequireWildcard(require("react"));
 var _reactRouterDom = require("react-router-dom");
 require("../styles/styles.css");
 var _Login = _interopRequireDefault(require("./components/Login"));
+var _Wheel = _interopRequireDefault(require("./components/Wheel"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 //Login page.
+//Main page.
 
 const _module = {
   //Extra helpers to this file.
@@ -35645,14 +35665,16 @@ function App() {
       })
     }), /*#__PURE__*/_react.default.createElement(_reactRouterDom.Route, {
       exact: true,
-      path: "wheel"
-      //element={}
+      path: "wheel",
+      element: /*#__PURE__*/_react.default.createElement(_Wheel.default, {
+        navigate: navigate
+      })
     })))
   );
 }
 var _default = App;
 exports.default = _default;
-},{"react":"node_modules/react/index.js","react-router-dom":"node_modules/react-router-dom/dist/index.js","../styles/styles.css":"styles/styles.css","./components/Login":"src/components/Login.js"}],"index.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","react-router-dom":"node_modules/react-router-dom/dist/index.js","../styles/styles.css":"styles/styles.css","./components/Login":"src/components/Login.js","./components/Wheel":"src/components/Wheel.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -35705,7 +35727,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58314" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65454" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

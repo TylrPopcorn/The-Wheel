@@ -160,5 +160,20 @@ body {
   background-color: hsl(var(--primary-hsl), 0.4);
 }
 
+.WHEEL {
+  display: flex;
+  justify-content: center;
+}
+
+.wheel-container {
+  /* height: 35rem; */
+  --color: hsl(var(--primary-dark-hsl), 0.4);
+  background-color: var(--color);
+  box-shadow: 0 0 15px 0 var(--color);
+  padding: 20px 20px;
+  width: 45%;
+  border-radius: 20px;
+}
+
 
 /*# sourceMappingURL=/repo1.e31bb0bc.css.map */
