@@ -1,3 +1,4 @@
+/*CREDIT TO WDS: */
 :root {
   --primary-light-hsl: 200, 100%, 91%;
   --primary-hsl: 200, 100%, 50%;
@@ -6,6 +7,7 @@
   --error-hsl: 0, 60%, 50%;
 }
 
+/* Credit to BloomTech */
 body {
   margin: 0;
   margin-top: -1.5%;
@@ -171,6 +173,77 @@ body {
   background-color: var(--color);
   box-shadow: 0 0 15px 0 var(--color);
   padding: 20px 20px;
-  width: 45%;
+  width: 30%;
   border-radius: 20px;
+  /* min-width: 400px;
+  min-height: 255px; */
+  display: flex;
+  justify-content: center;
+  display: grid;
+}
+
+/* Credit to Ana https://stackoverflow.com/a/12817454 */
+#wheel-physical {
+  --m: 6;
+  --tan: 1;
+  --d: 5em;
+  /* image size */
+  --rel: 1.2;
+  /* how much extra space we want between images, 1 = one image size */
+  --r: calc(0.5 * (1.2 + var(--rel)) * var(--d) / var(--tan));
+  /* circle radius */
+  --s: calc(2 * var(--r) + var(--d));
+  /* container size */
+  position: relative;
+  width: var(--s);
+  height: var(--s);
+  margin-bottom: 2rem;
+}
+
+#wheel-physical div {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: calc(-0.5 * var(--d));
+  width: var(--d);
+  height: var(--d);
+  --az: calc(var(--i) * 1turn / var(--m));
+  transform: rotate(var(--az)) translate(var(--r)) rotate(calc(-1 * var(--az)));
+}
+
+#wheel-physical .cog {
+  border-radius: 50%;
+  border: 3.5px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: white;
+  background-color: #8c6200;
+}
+
+#wheel-physical .cog.active {
+  background-color: #ff9900;
+  opacity: 0.9;
+}
+
+#keypad {
+  background-color: rgb(252, 252, 252);
+  border: 2px solid rgb(238, 238, 238);
+  padding: 0.55rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+#keypad button {
+  border: 1px solid #dddddd;
+  border-radius: 0;
+  min-height: 2.2rem;
+  min-width: 6rem;
+}
+
+#keypad button:active {
+  border: 1px solid #93005a;
+  background-color: white;
+  box-shadow: 0 0 5px #93005a;
 }
