@@ -5,11 +5,10 @@ import { BrowserRouter } from "react-router-dom";
 
 //Styles:
 //import "./styles/reset.css";
-//import "./styles/index.css";
+import "./styles/styles.css";
 
 //code related imports:
 import App from "./src/App";
-
 /*
   Dependencies:
 

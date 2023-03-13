@@ -35588,19 +35588,37 @@ exports.default = void 0;
 var _react = _interopRequireWildcard(require("react"));
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+//--vars:
+
+//---Main function:
 function Wheel(props) {
+  //
+  const navigate = props.navigate; //Used to navigate around the page.
+  //State to keep track of the data:
   const [state, setData] = (0, _react.useState)({
     TimesMoved: 0,
     Wheel: 4
   });
+  (0, _react.useEffect)(() => {
+    //After the page has loaded.
+    setTimeout(() => {
+      verify(navigate); //'Verify' if the user is logged in.
+    }, 2);
+  }, [navigate]);
+
+  //Each time one of the buttons gets clicked on:
   function onClick(option) {
-    const amount = option === "-" ? -1 : 1;
-    let newWheel = state.Wheel + amount;
+    const amount = option === "-" ? -1 : 1; //The amount to add to get the next number
+    let newWheel = state.Wheel + amount; //The actual next number
+
+    //Finalize the next number:
     if (newWheel < 0) {
       newWheel = 5;
     } else if (newWheel > 5) {
       newWheel = 0;
     }
+
+    //Update the data:
     setData({
       ...state,
       TimesMoved: state.TimesMoved + 1,
@@ -35631,6 +35649,20 @@ function Wheel(props) {
     onClick: () => onClick("+")
   }, "+"))));
 }
+//--
+//Used to verify if the user has logged in:
+function verify(navigate) {
+  const token = localStorage.getItem("token"); //check for any active tokens
+
+  if (token == null) {
+    //IF the user is not logged in,
+    navigate("/"); //redirect.
+  }
+}
+
+//
+//
+//----Exports:
 var _default = Wheel;
 exports.default = _default;
 },{"react":"node_modules/react/index.js"}],"src/App.js":[function(require,module,exports) {
@@ -35717,13 +35749,13 @@ exports.default = _default;
 var _react = _interopRequireDefault(require("react"));
 var _client = _interopRequireDefault(require("react-dom/client"));
 var _reactRouterDom = require("react-router-dom");
+require("./styles/styles.css");
 var _App = _interopRequireDefault(require("./src/App"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 //.
 
 //Styles:
 //import "./styles/reset.css";
-//import "./styles/index.css";
 
 //code related imports:
 
@@ -35739,7 +35771,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const root = _client.default.createRoot(document.getElementById("root"));
 root.render( /*#__PURE__*/_react.default.createElement(_reactRouterDom.BrowserRouter, null, /*#__PURE__*/_react.default.createElement(_App.default, null)));
-},{"react":"node_modules/react/index.js","react-dom/client":"node_modules/react-dom/client.js","react-router-dom":"node_modules/react-router-dom/dist/index.js","./src/App":"src/App.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","react-dom/client":"node_modules/react-dom/client.js","react-router-dom":"node_modules/react-router-dom/dist/index.js","./styles/styles.css":"styles/styles.css","./src/App":"src/App.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -35764,7 +35796,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50448" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59764" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
