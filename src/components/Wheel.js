@@ -43,7 +43,7 @@ function Wheel(props) {
     <div className="WHEEL">
       <div className="wheel-container">
         {/* the actual wheel */}
-        <div id="wheel-physical">
+        <div id="wheel-physical"> {/*credit to BloomTech*/}
           {[0, 1, 2, 3, 4, 5].map((val) => (
             <div
               key={val}
